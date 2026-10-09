@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+header('Content-Type: text/html; charset=utf-8');
+function esc(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
+$extensions = get_loaded_extensions(); sort($extensions);
+$tools = ['MQTT' => 'PhpMqtt\\Client\\MqttClient', 'HTTP / Guzzle' => 'GuzzleHttp\\Client', 'E-posta / PHPMailer' => 'PHPMailer\\PHPMailer\\PHPMailer', 'Dotenv' => 'Dotenv\\Dotenv', 'Log / Monolog' => 'Monolog\\Logger', 'Redis / Predis' => 'Predis\\Client'];
+require '/opt/php-tools/vendor/autoload.php';
+?><!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Web ortamı hazır</title>
+<style>body{font:16px system-ui;background:#101827;color:#e5edf9;margin:0;padding:35px}main{max-width:960px;margin:auto}h1{color:#71e2bd}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}.card{background:#1c293c;padding:22px;border-radius:16px;margin:16px 0}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #34425a}code{color:#71e2bd;overflow-wrap:anywhere}.tags{line-height:2.2}.tags span{background:#34425a;padding:4px 9px;border-radius:6px;margin:3px;display:inline-block}small{color:#a6b6cd}</style>
+<main><h1>Web geliştirme ortamınız hazır</h1><p>PHP · Apache · SSH/SFTP · Node.js · MQTT</p>
+<div class="grid"><div class="card"><small>PHP sürümü</small><h2><?=esc(PHP_VERSION)?></h2><p><?=esc(PHP_SAPI)?></p></div><div class="card"><small>Konteyner adı / hostname</small><h2><?=esc(gethostname() ?: 'bilinmiyor')?></h2><p>Ağ: Docker bridge</p></div><div class="card"><small>Web kökü</small><h2><code>/var/www/html</code></h2><p>SSH/SFTP kullanıcısı: mahmut</p></div></div>
+<div class="card"><h2>PHP araçları</h2><table><tr><th>Bileşen</th><th>Durum</th></tr><?php foreach ($tools as $label=>$class): ?><tr><td><?=esc($label)?></td><td><?=class_exists($class)?'Hazır':'Bulunamadı'?></td></tr><?php endforeach ?></table><p>Uygulamanızda: <code>require '/opt/php-tools/vendor/autoload.php';</code></p></div>
+<div class="card"><h2>Yüklü PHP modülleri</h2><div class="tags"><?php foreach($extensions as $ext): ?><span><?=esc($ext)?></span><?php endforeach ?></div></div>
+<div class="card"><h2>Çalışma limitleri</h2><table><?php foreach(['upload_max_filesize','post_max_size','memory_limit','max_execution_time','date.timezone'] as $setting): ?><tr><td><?=esc($setting)?></td><td><?=esc((string)ini_get($setting))?></td></tr><?php endforeach ?></table></div>
+<div class="card"><h2>Bağlantı ve geliştirme</h2><p>HTTP portu Docker tarafından 300–399, SSH/SFTP portu 400–499 aralığından seçilir. Kesin portları Portainer konteyner ekranındaki Published ports bölümünden görebilirsiniz.</p><p>Konteyner iç portları HTTP: 80 · SSH: 22. Node.js 24 LTS, npm ve Composer 2 imajda bulunur. Next.js uygulamanız ayrıca başlatılmalıdır.</p><p>MySQL/PostgreSQL/Redis/MQTT sunucularınıza IP adresiyle bağlanın; bu ortam bağlantı istemcilerini içerir.</p><p>Bu başlangıç sayfasını kendi index.php dosyanızla değiştirebilirsiniz. Mevcut index.php veya index.html üzerine otomatik yazılmaz.</p></div></main></html>

@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    image: mahmut-php-web:8.5-v3
+    network_mode: bridge
+    ports:
+      - "${HOST_HTTP_PORT:-300-399}:80"
+      - "${HOST_SSH_PORT:-400-499}:22"
+    volumes:
+      - "${WEB_ROOT:-/home/umbrel/web}/${COMPOSE_PROJECT_NAME:?Portainer stack adini COMPOSE_PROJECT_NAME olarak girin}/www:/var/www/html"
+      - ssh_host_keys:/etc/ssh/host-keys
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8081/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+volumes:
+  ssh_host_keys:
